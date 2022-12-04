@@ -9,7 +9,8 @@ import Home from "./views/Home";
 import Guest from "./components/Guest";
 import Profile from "./views/Profile";
 import ExternalApi from "./views/ExternalApi";
-import Houses from "./views/Houses";
+// import Houses from "./views/Houses";
+import Houses from "./views/FuncHouses";
 import { useAuth0 } from "@auth0/auth0-react";
 import history from "./utils/history";
 

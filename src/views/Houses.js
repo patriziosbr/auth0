@@ -1,32 +1,53 @@
-import React, { Component, useState } from "react";
-import axios from "axios";
+import React, { Component } from "react";
+// import axios from "axios";
 import { units } from "../utils/units";
 
 import { Row, Col, Button, Form, FormGroup, Label, Input} from "reactstrap";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import Loading from "../components/Loading";
+import { withAuth0 } from '@auth0/auth0-react';
 
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import contentData from "../utils/contentData";
 
 class Houses extends Component {
-    state = {
+    constructor(props) {
+    super(props);
+    this.state = {
         loading: false,
         items: [],
         name: ""
+
+        }
     }
-    handleAddItem = (pippo) => {
+    handleAddItem = (unit) => {
         const items = this.state.items;
-        this.setState({ items: [...items, pippo+'item-' + items.length] });
+        this.setState({ items: [...items, unit] });
     };
-
-
+    handleChange = (e) => {
+        this.setState({ name: e.target.value });
+    };
+    // creatHouse() {
+    //     // console.log(this.state.pokeData); //the pokemon
+    //     let units = this.state.items;
+    //     let name = this.state.name;
+    //     axios.post('http://localhost:8000/house/', units, name)
+    //     .then( res => {
+    //         console.log('res axios senno è triste', res.data); //the pokemon
+    //     }).catch( err => {
+    //         console.log('axios error Post', err);
+    //         //alert in extremis
+    //     })
+    // }
 
     render() {
         const items = this.state.items;
+        const { user } = withAuth0();
+        console.log(user);
         return (
+            
         <div className="next-steps my-5">
-            <h2 className="my-5">Houses</h2>
+            <h2 className="my-5">Houses userid: </h2>
             <Row>
                 <Col>
                     List: {items.length} total items.
@@ -40,7 +61,7 @@ class Houses extends Component {
                             <Col sm="6">
                                 <FormGroup>
                                     <Label for="houseName">House name</Label>
-                                    <Input type="text" name="text" id="houseName" placeholder="with a placeholder" />
+                                    <Input type="text" value={this.name} onChange={this.handleChange} name="text" id="houseName"  />
                                 </FormGroup>
                             </Col>
                             <Col sm="6">
