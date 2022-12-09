@@ -18,7 +18,7 @@ library.add(...iconList)
 
 
  const CreateHouse = () => {
-
+    
     const { user } = useAuth0();
     //add and remove units
     let countUnits = "";
@@ -40,7 +40,8 @@ library.add(...iconList)
     let [errorUnit, setErrorUnit] = useState(0);
     let [errorText, setErrorText] = useState(0);
     let [errorInvalidChar, setErrorInvalidChar] = useState(0);
-    const createHouse = async () => {
+    const createHouse = async (e) => {
+    e.preventDefault();
       //Check house units selected
       if(userUnit.length < 1) {
           errorUnit = setErrorUnit(1);
@@ -66,7 +67,8 @@ library.add(...iconList)
       // show all the error at the same time and exit
       if(userUnit.length === 0 || houseName.length < 3) 
           return
-  
+      
+
       axios.post('http://localhost:8000/houses',
           {"user_id":user.sub , "name":houseName, "units":userUnit })
           .then( res => {
@@ -82,6 +84,8 @@ library.add(...iconList)
     return(
         <div>
             <h2 className="mb-5">Add a New Property</h2>
+
+        <form>
         <Row>
             <Col xs="12" sm="6" className="mb-5">
                 <Label for="houseName">House name</Label>
@@ -120,9 +124,11 @@ library.add(...iconList)
                 <h6 className={(errorUnit ? 'text-danger' : "d-none")}>Select dat least 1 unit</h6>
             </Col>
             <Col xs="12" sm="3">
-                <button type="button" className="btn btn-success w-100" onClick={createHouse}>Create House</button>
+                <button type="submit" className="btn btn-success w-100" onClick={createHouse}>Create House</button>
             </Col>
         </Row>
+        </form>
+
         </div>
     )
 }

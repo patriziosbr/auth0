@@ -1,6 +1,8 @@
 import React, {useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from 'axios';
+import { Card, CardBody, CardTitle, ListGroup, ListGroupItem} from "reactstrap";
+
 
 const ShowHouses = () => {
     const { user } = useAuth0();
@@ -18,17 +20,35 @@ const ShowHouses = () => {
         //    console.log(user_house_temp);
            return
         });
-    },[setUserHouse, user_id]);
+    }, [setUserHouse, user_id]);
     console.log(userHouse);
     return(
         <div>
             <h2>Your Houses</h2>
             { 
                 userHouse && 
-                    <div>
-                        {userHouse.map(({ name }, index) => {
+                    <div className="d-flex">
+                        {userHouse.map((house, index) => {
                             return (
-                                <h4 className="mr-5">{name}</h4>
+                                <Card
+                                style={{
+                                    width: '18rem'
+                                }}
+                                key={index}
+                                >
+                                <CardBody>
+                                    <CardTitle tag="h5">
+                                    {house.name}
+                                    </CardTitle>
+                                </CardBody>
+                                <ListGroup flush>
+                                    <ListGroupItem>
+                                        {house.units.map((type, index) => {
+                                            return <h6 key={index}>{type}</h6>
+                                        })}
+                                    </ListGroupItem>
+                                </ListGroup>
+                                </Card>
                             );
                         })}
                     </div>
