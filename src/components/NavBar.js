@@ -77,11 +77,11 @@ const NavBar = () => {
                 <NavItem>
                   <NavLink
                     tag={RouterNavLink}
-                    to="/profile"
+                    to="/createhouse"
                     exact
                     activeClassName="router-link-exact-active"
                   >
-                    Profile
+                    createhouse
                   </NavLink>
                 </NavItem>
               )}

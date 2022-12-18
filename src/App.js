@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import Home from "./views/Home";
 import Guest from "./components/Guest";
 import Profile from "./views/Profile";
+import CreateHouse from "./components/CreateHouse";
 // import ExternalApi from "./views/ExternalApi";
 // import Houses from "./views/Houses";
 import Houses from "./views/FuncHouses";
@@ -40,7 +41,8 @@ const App = () => {
           <Switch>
             <Route path="/" exact component={Home} />
             <Route path="/guest" component={Guest} />
-            <Route path="/profile" component={Profile} />
+            {/* <Route path="/profile" component={Profile} /> */}
+            <Route path="/createhouse" component={CreateHouse} />
             <Route path="/houses" component={Houses} />
           </Switch>
         </Container>

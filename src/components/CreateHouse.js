@@ -1,12 +1,16 @@
 import React, { useState }  from "react";
 
-import { Button, Row, Col, Label, Input} from "reactstrap";
+import { Button, Row, Col, Label, Input, Alert} from "reactstrap";
 import { useAuth0 } from "@auth0/auth0-react";
 import { units } from "../utils/units";
 import axios from 'axios';
-//all fontawesome icons
-import { library } from '@fortawesome/fontawesome-svg-core';
+import { library } from '@fortawesome/fontawesome-svg-core'; //all fontawesome icons
 import * as Icons from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Loading from "../components/Loading";
+import { withAuthenticationRequired } from "@auth0/auth0-react";
+import Houses from "../views/FuncHouses";
+import { Route, Link, BrowserRouter as Router, Switch } from "react-router-dom";
 
 const iconList = Object
     .keys(Icons)
@@ -16,9 +20,7 @@ const iconList = Object
 library.add(...iconList)
 //END all fontawesome icons
 
-
- const CreateHouse = () => {
-    
+ const CreateHouse = () => {      
     const { user } = useAuth0();
     //add and remove units
     let countUnits = "";
@@ -36,10 +38,18 @@ library.add(...iconList)
     const [houseName, setHouseName] = useState('');
     const handleChange = (e) => setHouseName(e.target.value);
     //END define house name
+
+    //House name posted 
+    const [houseNamePosted, setHouseNamePosted] = useState('');
+    //END House name posted
+  
+    // close success msg
+    const closeMsg = () => setSuccessMsg(0);
+    //END  close success msg
   
     let [errorUnit, setErrorUnit] = useState(0);
     let [errorText, setErrorText] = useState(0);
-    let [errorInvalidChar, setErrorInvalidChar] = useState(0);
+    let [successMsg, setSuccessMsg] = useState(0);
     const createHouse = async (e) => {
     e.preventDefault();
       //Check house units selected
@@ -55,36 +65,44 @@ library.add(...iconList)
           console.log("error text too short");
       } else {
           errorText = setErrorText(0);
-          if(/[^0-9a-zA-Z]/.test(houseName)) {
-              errorInvalidChar = setErrorInvalidChar(1);
-              console.log("error errorInvalidChar");
-              // exit if the length is more than 3 but contain an invalid char (onlit alphnumeric accepted) 
-              return
-          } else {
-              errorInvalidChar = setErrorInvalidChar(0);
-          }
       }
       // show all the error at the same time and exit
       if(userUnit.length === 0 || houseName.length < 3) 
           return
-      
 
+      successMsg = setSuccessMsg(0)
       axios.post('http://localhost:8000/houses',
           {"user_id":user.sub , "name":houseName, "units":userUnit })
           .then( res => {
+              successMsg = setSuccessMsg(1)
               setArr([])
               setHouseName('') //clear input after submit
+              setTimeout(() => {
+                {closeMsg()}
+              }, 5000);
+              houseNamePosted = setHouseNamePosted(res.data.name)
               console.log('bingo', res.data);
           }).catch( err => {
               console.log('axios error Post', err);
           })
     };
-  
+
+
     
     return(
         <div>
             <h2 className="mb-5">Add a New Property</h2>
-
+            { successMsg ?
+                <Alert color="success" className='d-flex align-items-center justify-content-between'>
+                    <p>House succesfully created
+                        <Link to="/houses"> Go to houses</Link>
+                    </p>
+                    <Button className="btn btn-success" onClick={closeMsg}>Close</Button>
+                </Alert>
+                :
+                ''
+            }
+            
         <form>
         <Row>
             <Col xs="12" sm="6" className="mb-5">
@@ -93,7 +111,6 @@ library.add(...iconList)
                     value={houseName} 
                     onChange={handleChange} />
                 <h6 className={(errorText ? 'text-danger' : "d-none")}>House name at least 3 char</h6>
-                { errorInvalidChar ? <h6 className={'text-danger'}>Invalid char</h6> : ''}
             </Col>
             
             <Col xs="12" sm="6">
@@ -130,6 +147,9 @@ library.add(...iconList)
         </form>
 
         </div>
-    )
+        )
 }
-export default CreateHouse;
+
+export default withAuthenticationRequired(CreateHouse, {
+    onRedirecting: () => <Loading />,
+  });
